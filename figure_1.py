@@ -120,6 +120,8 @@ def return_figure_1():
         color=sns_colors[0],
     )
 
+
+
     axs[0].errorbar(
         df_pivot_speaking["diameter"],
         df_pivot_speaking["concentration_median"],
@@ -142,6 +144,8 @@ def return_figure_1():
         fontsize=10,
         color=sns_colors[1],
     )
+
+    axs[0].set_title("a", loc="left", fontsize=12, fontweight="bold", x=-0.095, y=1.05)
 
     axs[0].set_yscale("log")
     axs[0].set_xscale("log")
@@ -173,6 +177,8 @@ def return_figure_1():
         ax=axs[1],
         color=sns_colors[4],
     )
+
+    axs[1].set_title("b", loc="left", fontsize=12, fontweight="bold", x=-0.095, y=0.95)
 
     axs[1].set_yscale("log")
     axs[1].xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: "{:.2f}".format(x)))
