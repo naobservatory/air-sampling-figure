@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
 
-SPEAKING_DATA_FILE = "data/speaking_2023_bagheri.csv"
-BREATHING_DATA_FILE = "data/breathing_2023_bagheri.csv"
+SPEAKING_DATA_FILE = "data/heads-data-speaking.csv"
+BREATHING_DATA_FILE = "data/heads-data-breathing.csv"
 
 
 def get_cunningham_corr_factor(diameter):
@@ -26,7 +26,7 @@ def get_terminal_velocity(diameter):
 
 
 def get_settling_time():
-    diameters = np.logspace(-7.3, -3.4, num=30)
+    diameters = np.logspace(-7.9, -3.4, num=30)
     residence_times = []
 
     for diameter in diameters:
@@ -54,39 +54,14 @@ def return_bagheri_dfs():
     df_speaking = pd.read_csv(SPEAKING_DATA_FILE)
     df_breathing = pd.read_csv(BREATHING_DATA_FILE)
 
-    def process_df(df):
-        df = df.pivot(
-            index="point_group",
-            columns="point_type",
-            values=["concentration", "diameter_um"],
-        )
-        df.columns = ["_".join(col).strip() for col in df.columns.values]
-        df["diameter"] = df["diameter_um_median"]
+    CONCENTRATION_CUT_OFF = 1e-4
+    # Based on the underlying data, plotted in Figure 6 of this paper: https://doi.org/10.1016/j.jaerosci.2022.106102 I do not trust the data
+    # for the lower concentrations.
+    df_speaking = df_speaking[df_speaking["concentration"] > CONCENTRATION_CUT_OFF]
+    df_breathing = df_breathing[df_breathing["concentration"] > CONCENTRATION_CUT_OFF]
 
 
-        df["concentration_upper_ci_err"] = (
-            df["concentration_upper_ci"] - df["concentration_median"]
-        )
-        df["concentration_lower_ci_err"] = (
-            df["concentration_median"] - df["concentration_lower_ci"]
-        )
-
-        df = df.drop(
-            columns=[
-                "diameter_um_median",
-                "diameter_um_lower_ci",
-                "diameter_um_upper_ci",
-
-            ],
-            inplace=False
-        )
-
-        return df
-
-    df_pivot_breathing = process_df(df_breathing)
-    df_pivot_speaking = process_df(df_speaking)
-
-    return df_pivot_breathing, df_pivot_speaking
+    return df_breathing, df_speaking
 
 
 def return_figure_1():
@@ -97,20 +72,16 @@ def return_figure_1():
 
     sns_colors = sns.color_palette()
 
-    axs[0].errorbar(
-        df_pivot_breathing["diameter"],
-        df_pivot_breathing["concentration_median"],
-        yerr=[
-            df_pivot_breathing["concentration_lower_ci_err"],
-            df_pivot_breathing["concentration_upper_ci_err"],
-        ],
-        fmt="o",
+    axs[0].plot(
+        df_pivot_breathing["particle-diameter"],
+        df_pivot_breathing["concentration"],
+        'o',
         color=sns_colors[0],
-        label="Median with CI",
+        label="Breathing",
         markersize=4,
     )
     axs[0].text(
-        0.48,
+        0.42,
         0.3,
         "Breathing",
         transform=axs[0].transAxes,
@@ -122,21 +93,17 @@ def return_figure_1():
 
 
 
-    axs[0].errorbar(
-        df_pivot_speaking["diameter"],
-        df_pivot_speaking["concentration_median"],
-        yerr=[
-            df_pivot_speaking["concentration_lower_ci_err"],
-            df_pivot_speaking["concentration_upper_ci_err"],
-        ],
-        fmt="o",
+    axs[0].plot(
+        df_pivot_speaking["particle-diameter"],
+        df_pivot_speaking["concentration"],
+        'o',
         color=sns_colors[1],
-        label="Median with CI",
+        label="Speaking",
         markersize=4,
     )
     axs[0].text(
-        0.69,
-        0.75,
+        0.68,
+        0.74,
         "Speaking",
         transform=axs[0].transAxes,
         ha="left",
