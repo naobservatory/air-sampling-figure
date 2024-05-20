@@ -26,7 +26,7 @@ def get_terminal_velocity(diameter):
 
 
 def get_settling_time():
-    diameters = np.logspace(-7.9, -3.4, num=30)
+    diameters = np.logspace(-7.9, -3, num=30)
     residence_times = []
 
     for diameter in diameters:
@@ -81,7 +81,7 @@ def return_figure_1():
         markersize=4,
     )
     axs[0].text(
-        0.42,
+        0.44,
         0.3,
         "Breathing",
         transform=axs[0].transAxes,
@@ -114,6 +114,7 @@ def return_figure_1():
 
     axs[0].set_title("a", loc="left", fontsize=12, fontweight="bold", x=-0.095, y=1.05)
 
+
     axs[0].set_yscale("log")
     axs[0].set_xscale("log")
     axs[0].set_xlabel("Aerosol diameter (μm)", fontsize=9)
@@ -125,14 +126,14 @@ def return_figure_1():
     )
     axs[0].set_title("")
 
-    axs[0].legend(
-        loc="lower center",
-        bbox_to_anchor=(0.5, -0.4),
-        title=None,
-        ncol=2,
-        frameon=False,
-        fontsize=10,
-    )
+    #axs[0].legend(
+    #    loc="lower center",
+    #    bbox_to_anchor=(0.5, -0.4),
+    #    title=None,
+    #    ncol=2,
+    #    frameon=False,
+    #    fontsize=10,
+    #)
 
     settling_df = get_settling_time()
 
@@ -175,6 +176,8 @@ def return_figure_1():
         ax.grid(True, which="major", color="gray", linewidth=0.2)
         ax.spines["right"].set_visible(False)
         ax.spines["top"].set_visible(False)
+
+    plt.tight_layout()
 
     plt.savefig("fig/aerosol_size_distribution.png", dpi=600)
     plt.savefig("fig/aerosol_size_distribution.pdf")
