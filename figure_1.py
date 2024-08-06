@@ -126,15 +126,6 @@ def return_figure_1():
     )
     axs[0].set_title("")
 
-    #axs[0].legend(
-    #    loc="lower center",
-    #    bbox_to_anchor=(0.5, -0.4),
-    #    title=None,
-    #    ncol=2,
-    #    frameon=False,
-    #    fontsize=10,
-    #)
-
     settling_df = get_settling_time()
 
     settling_df_sorted = settling_df.sort_values(by="Aerosol diameter (um)")
