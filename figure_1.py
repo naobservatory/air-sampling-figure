@@ -26,14 +26,13 @@ def get_terminal_velocity(diameter):
 
 
 def get_settling_time():
-    diameters = np.logspace(-7.9, -3, num=30)
+    diameters = np.logspace(-7.9, -3, num=50)
     residence_times = []
 
     for diameter in diameters:
 
         terminal_velocity = get_terminal_velocity(diameter)
         residence_time_s = 1.5 / terminal_velocity
-
 
         residence_times.append(residence_time_s)
 
@@ -60,7 +59,6 @@ def return_bagheri_dfs():
     df_speaking = df_speaking[df_speaking["concentration"] > CONCENTRATION_CUT_OFF]
     df_breathing = df_breathing[df_breathing["concentration"] > CONCENTRATION_CUT_OFF]
 
-
     return df_breathing, df_speaking
 
 
@@ -75,7 +73,7 @@ def return_figure_1():
     axs[0].plot(
         df_pivot_breathing["particle-diameter"],
         df_pivot_breathing["concentration"],
-        'o',
+        "o",
         color=sns_colors[0],
         label="Breathing",
         markersize=4,
@@ -91,12 +89,10 @@ def return_figure_1():
         color=sns_colors[0],
     )
 
-
-
     axs[0].plot(
         df_pivot_speaking["particle-diameter"],
         df_pivot_speaking["concentration"],
-        'o',
+        "o",
         color=sns_colors[1],
         label="Speaking",
         markersize=4,
@@ -114,7 +110,6 @@ def return_figure_1():
 
     axs[0].set_title("a", loc="left", fontsize=12, fontweight="bold", x=-0.095, y=1.05)
 
-
     axs[0].set_yscale("log")
     axs[0].set_xscale("log")
     axs[0].set_xlabel("Aerosol diameter (μm)", fontsize=9)
@@ -126,24 +121,35 @@ def return_figure_1():
     )
     axs[0].set_title("")
 
-    #axs[0].legend(
-    #    loc="lower center",
-    #    bbox_to_anchor=(0.5, -0.4),
-    #    title=None,
-    #    ncol=2,
-    #    frameon=False,
-    #    fontsize=10,
-    #)
-
     settling_df = get_settling_time()
 
     settling_df_sorted = settling_df.sort_values(by="Aerosol diameter (um)")
+
+    settling_df_dashed = settling_df_sorted[
+        settling_df_sorted["Aerosol diameter (um)"] <= 0.51
+    ]
+    settling_df_solid = settling_df_sorted[
+        settling_df_sorted["Aerosol diameter (um)"] >= 0.5
+    ]
+
+    # Plot the dashed line
     sns.lineplot(
-        data=settling_df_sorted,
+        data=settling_df_dashed,
         x="Aerosol diameter (um)",
         y="Residence time (seconds)",
         ax=axs[1],
         color=sns_colors[4],
+        linestyle="--",
+    )
+
+    # Plot the solid line
+    sns.lineplot(
+        data=settling_df_solid,
+        x="Aerosol diameter (um)",
+        y="Residence time (seconds)",
+        ax=axs[1],
+        color=sns_colors[4],
+        linestyle="-",
     )
 
     axs[1].set_title("b", loc="left", fontsize=12, fontweight="bold", x=-0.095, y=0.95)
