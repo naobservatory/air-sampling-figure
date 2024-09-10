@@ -151,6 +151,9 @@ def return_figure_1():
         color=sns_colors[4],
         linestyle="-",
     )
+    y_min, y_max = axs[1].get_ylim()
+    print(y_min, y_max)
+    # axs[1].set_ylim(y_min, y_max * 10)
 
     axs[1].set_title("b", loc="left", fontsize=12, fontweight="bold", x=-0.095, y=0.95)
 
@@ -158,7 +161,7 @@ def return_figure_1():
     axs[1].xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: "{:.2f}".format(x)))
 
     axs[1].set_xlabel("Aerosol diameter (μm)", fontsize=9)
-    axs[1].set_ylabel("Residence time", fontsize=9)
+    axs[1].set_ylabel("Theoretical residence time", fontsize=9)
 
     tick_values = [
         1,
